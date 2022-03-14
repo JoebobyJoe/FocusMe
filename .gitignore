@@ -13,9 +13,9 @@ ipch
 *.suo
 *.VC.db
 *.VC.VC.opendb
-build/*
-Debug/*
-Release/*
+*/build/*
+*/Debug/*
+*/Release/*
 */x64/*
 
 # Compiled Object files
