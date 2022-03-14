@@ -16,7 +16,7 @@ ipch
 build/*
 Debug/*
 Release/*
-x64/*
+*/x64/*
 
 # Compiled Object files
 *.slo
