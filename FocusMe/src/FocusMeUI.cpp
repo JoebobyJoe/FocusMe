@@ -5,11 +5,6 @@
 //#include "time.h"
 #include <list>
 
-enum time
-{
-    AM,
-    PM
-};
 
 namespace FocusMeUI
 {
@@ -56,26 +51,27 @@ namespace FocusMeUI
 
             //starting time
             static int s_meridiem = 0, e_meridiem = 0;
-            ImGui::InputInt2("From (Hour:Minute)", start.getTime()); ImGui::SameLine();
+            ImGui::InputInt2("From (Hour:Minute)", start.getTime()); ImGui::SameLine(); ImGui::SameLine();
             if (ImGui::RadioButton("AM##Start", AM == s_meridiem)) { s_meridiem = AM; }; ImGui::SameLine();
             if (ImGui::RadioButton("PM##Start", PM == s_meridiem)) { s_meridiem = PM; };
 
             //ending time
-            ImGui::InputInt2("To (Hour:Minute)", end.getTime()); ImGui::SameLine();
+            ImGui::InputInt2("To (Hour:Minute)", end.getTime()); ImGui::SameLine(); ImGui::SameLine();
             if (ImGui::RadioButton("AM##End", AM == e_meridiem)) { e_meridiem = AM; }; ImGui::SameLine();
             if (ImGui::RadioButton("PM##End", PM == e_meridiem)) { e_meridiem = PM; };
 
-    
-
+            //button for submitting the time
             static int clicked = 0;
             if (ImGui::Button("Add 'off' time"))
                 clicked = 1;
             if (clicked == 1)
             {
-                ImGui::SameLine();
                 ImGui::Text("Time submitted");
 
+                //add the time to the list
                 times.push_back(TimeSet(start, end));
+
+                //reset the button, otherwise every frame adds the time
                 clicked = 0;
             }
             
@@ -85,25 +81,37 @@ namespace FocusMeUI
 
         //time display 
         {
+            static int clicked = 0;
+            
+
+            ImGui::Text("Times program x won't run:");
             //display all times entered by the user
             static TimeSet selected_time = TimeSet(-1, -1); // Here we store our selection data as an index.
-            if (ImGui::BeginListBox("Times for program x"))
+            if (ImGui::BeginListBox("##Timelist"))
             {
                 std::list <TimeSet> ::iterator it;
                 for (it = times.begin(); it != times.end(); it++)
                 {
                     const bool is_selected = (selected_time == *it);
+
+                    if (is_selected)
+                    {
+                        ImGui::Text("There is a line selected");
+                    }
+
                     if (ImGui::Selectable((*it).toString().c_str(), is_selected))
                     {
-                        static int clicked = 0;
-                        if (ImGui::Button("Remove Time"))
-                            clicked = 1;
+                        //don't do anything if the button wasn't clicked
                         if (clicked == 1)
                         {
-                            ImGui::SameLine();
-                            ImGui::Text("Time removed");
+                            //ImGui::SameLine();
+                            //ImGui::Text("Time removed");
 
-                            //times.remove(*it);
+                            //remove the item from the list
+                            times.erase(it);
+                            break;
+
+                            //reset the button
                             clicked = 0;
                         }
                     }
@@ -114,15 +122,17 @@ namespace FocusMeUI
                         ImGui::SetItemDefaultFocus();
                 }
 
-                
-
                 ImGui::EndListBox();
             }
+
+            if (ImGui::Button("Remove Time"))
+                clicked = 1;
         }
         //end time display
 
         ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
         ImGui::End();
+
 
         // 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
         if (show_demo_window)

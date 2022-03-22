@@ -13,7 +13,7 @@ public:
 	std::string toString();
 
 	//overrides
-	int operator==(TimeSet x);
+	int operator==(const TimeSet x);
 
 private:
 	Time m_time[2];
@@ -51,7 +51,7 @@ std::string TimeSet::toString()
 	return m_time[0].to_string() + " - " + m_time[1].to_string();
 }
 
-int TimeSet::operator==(TimeSet x)
+int TimeSet::operator==(const TimeSet x)
 {
 	if (m_time[0] == x.m_time[0] && m_time[1] == x.m_time[1])
 	{

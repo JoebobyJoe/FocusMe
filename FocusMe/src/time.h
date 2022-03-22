@@ -2,6 +2,12 @@
 
 #include <string>
 
+enum E_TIME
+{
+	AM,
+	PM
+};
+
 static class Time
 {
 public:
@@ -9,7 +15,7 @@ public:
 	Time(int hour, int min);
 	~Time();
 	int* getTime();
-	int operator==(Time x);
+	int operator==(const Time x);
 	std::string to_string();
 	
 
@@ -46,7 +52,7 @@ std::string Time::to_string()
 	return  hour + ":" + min;
 }
 
-int Time::operator==(Time x)
+int Time::operator==(const Time x)
 {
 	if (m_time[0] == x.m_time[0] && m_time[1] == x.m_time[1])
 	{
