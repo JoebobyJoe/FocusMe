@@ -1,36 +1,21 @@
 #include "FocusMeUI.h"
 
 #include "imgui.h"
+#include "timeSet.h"
+//#include "time.h"
+#include <list>
 
-/*
-// Helper to wire demo markers located in code to a interactive browser
-typedef void (*ImGuiDemoMarkerCallback)(const char* file, int line, const char* section, void* user_data);
-extern ImGuiDemoMarkerCallback  GImGuiDemoMarkerCallback;
-extern void* GImGuiDemoMarkerCallbackUserData;
-ImGuiDemoMarkerCallback         GImGuiDemoMarkerCallback = NULL;
-void* GImGuiDemoMarkerCallbackUserData = NULL;
-#define IMGUI_DEMO_MARKER(section)  do { if (GImGuiDemoMarkerCallback != NULL) GImGuiDemoMarkerCallback(__FILE__, __LINE__, section, GImGuiDemoMarkerCallbackUserData); } while (0)
-*/
-
-// Helper to display a little (?) mark which shows a tooltip when hovered.
-// In your own code you may want to display an actual icon if you are using a merged icon fonts (see docs/FONTS.md)
-/*
-static void HelpMarker(const char* desc)
+enum time
 {
-    ImGui::TextDisabled("(?)");
-    if (ImGui::IsItemHovered())
-    {
-        ImGui::BeginTooltip();
-        ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
-        ImGui::TextUnformatted(desc);
-        ImGui::PopTextWrapPos();
-        ImGui::EndTooltip();
-    }
-}
-*/
+    AM,
+    PM
+};
 
 namespace FocusMeUI
 {
+    //list of times that the user doesn't want to use program x
+    std::list<TimeSet>times;
+
 	void RenderUI()
 	{
         // Our state
@@ -38,9 +23,9 @@ namespace FocusMeUI
         bool show_another_window = false;
         ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
-        //style the windo
+        //style the window
         ImGuiStyle& style = ImGui::GetStyle();
-        style.WindowMinSize = ImVec2(600, 600);//ImVec2(ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().y);
+        style.WindowMinSize = ImVec2(700, 700);//ImVec2(ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().y);
         
 
         ImGui::Begin("Settings", 0, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize);
@@ -66,25 +51,34 @@ namespace FocusMeUI
         {
             ImGui::Text("What time should this program not be used?");
 
-            static int start_hm[2] = { 10, 30 };
-            static int end_hm[2] = { 11, 30 };
-            static int am_pm = 0;
-            ImGui::InputInt2("Hour: Minute", start_hm); ImGui::SameLine();
-            ImGui::RadioButton("AM", &am_pm, 0); ImGui::SameLine();
-            ImGui::RadioButton("PM", &am_pm, 1);
+            //variables
+            static Time start = Time(), end = Time();
 
-            ImGui::InputInt2("Hour: Minute", end_hm); ImGui::SameLine();
-            ImGui::RadioButton("AM", &am_pm, 0); ImGui::SameLine();
-            ImGui::RadioButton("PM", &am_pm, 1);
+            //starting time
+            static int s_meridiem = 0, e_meridiem = 0;
+            ImGui::InputInt2("From (Hour:Minute)", start.getTime()); ImGui::SameLine();
+            if (ImGui::RadioButton("AM##Start", AM == s_meridiem)) { s_meridiem = AM; }; ImGui::SameLine();
+            if (ImGui::RadioButton("PM##Start", PM == s_meridiem)) { s_meridiem = PM; };
+
+            //ending time
+            ImGui::InputInt2("To (Hour:Minute)", end.getTime()); ImGui::SameLine();
+            if (ImGui::RadioButton("AM##End", AM == e_meridiem)) { e_meridiem = AM; }; ImGui::SameLine();
+            if (ImGui::RadioButton("PM##End", PM == e_meridiem)) { e_meridiem = PM; };
+
+    
 
             static int clicked = 0;
             if (ImGui::Button("Add 'off' time"))
-                clicked++;
-            if (clicked & 1)
+                clicked = 1;
+            if (clicked == 1)
             {
                 ImGui::SameLine();
                 ImGui::Text("Time submitted");
+
+                times.push_back(TimeSet(start, end));
+                clicked = 0;
             }
+            
         }
         //end time entry
         
@@ -92,38 +86,46 @@ namespace FocusMeUI
         //time display 
         {
             //display all times entered by the user
+            static TimeSet selected_time = TimeSet(-1, -1); // Here we store our selection data as an index.
+            if (ImGui::BeginListBox("Times for program x"))
+            {
+                std::list <TimeSet> ::iterator it;
+                for (it = times.begin(); it != times.end(); it++)
+                {
+                    const bool is_selected = (selected_time == *it);
+                    if (ImGui::Selectable((*it).toString().c_str(), is_selected))
+                    {
+                        static int clicked = 0;
+                        if (ImGui::Button("Remove Time"))
+                            clicked = 1;
+                        if (clicked == 1)
+                        {
+                            ImGui::SameLine();
+                            ImGui::Text("Time removed");
 
+                            //times.remove(*it);
+                            clicked = 0;
+                        }
+                    }
+                        //selected_time = *it;
+
+                    // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+                    if (is_selected)
+                        ImGui::SetItemDefaultFocus();
+                }
+
+                
+
+                ImGui::EndListBox();
+            }
         }
         //end time display
 
-        
+        ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
         ImGui::End();
 
         // 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
         if (show_demo_window)
             ImGui::ShowDemoWindow(&show_demo_window);
-
-        // 2. Show a simple window that we create ourselves. We use a Begin/End pair to created a named window.
-        {
-            static float f = 0.0f;
-            static int counter = 0;
-
-            ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
-
-            ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
-            ImGui::Checkbox("Demo Window", &show_demo_window);      // Edit bools storing our window open/close state
-            ImGui::Checkbox("Another Window", &show_another_window);
-
-            ImGui::SliderFloat("float", &f, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
-            ImGui::ColorEdit3("clear color", (float*)&clear_color); // Edit 3 floats representing a color
-
-            if (ImGui::Button("Button"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
-                counter++;
-            ImGui::SameLine();
-            ImGui::Text("counter = %d", counter);
-
-            ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-            ImGui::End();
-        }
 	}
 }

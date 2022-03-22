@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 static class Time
 {
 public:
@@ -7,21 +9,24 @@ public:
 	Time(int hour, int min);
 	~Time();
 	int* getTime();
+	int operator==(Time x);
+	std::string to_string();
+	
 
 private:
-	int m_hour, m_min;
+	int m_time[2];
 };
 
 Time::Time()
 {
-	m_hour = 0;
-	m_min = 0;
+	m_time[0] = 0;
+	m_time[1] = 0;
 }
 
 Time::Time(int hour, int min)
 {
-	m_hour = hour;
-	m_min = min;
+	m_time[0] = hour;
+	m_time[1] = min;
 }
 
 Time::~Time()
@@ -30,6 +35,23 @@ Time::~Time()
 
 int* Time::getTime()
 {
-	int arr[2] = { m_hour, m_min };
-	return arr;
+	return m_time;
+}
+
+
+std::string Time::to_string()
+{
+	std::string hour = (m_time[0] < 10) ? "0" + std::to_string(m_time[0]) : std::to_string(m_time[0]);
+	std::string min = (m_time[1] < 10) ? "0" + std::to_string(m_time[1]) : std::to_string(m_time[1]);
+	return  hour + ":" + min;
+}
+
+int Time::operator==(Time x)
+{
+	if (m_time[0] == x.m_time[0] && m_time[1] == x.m_time[1])
+	{
+		return 1;
+	}
+
+	return 0;
 }
