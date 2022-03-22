@@ -14,6 +14,7 @@ void* GImGuiDemoMarkerCallbackUserData = NULL;
 
 // Helper to display a little (?) mark which shows a tooltip when hovered.
 // In your own code you may want to display an actual icon if you are using a merged icon fonts (see docs/FONTS.md)
+/*
 static void HelpMarker(const char* desc)
 {
     ImGui::TextDisabled("(?)");
@@ -26,6 +27,7 @@ static void HelpMarker(const char* desc)
         ImGui::EndTooltip();
     }
 }
+*/
 
 namespace FocusMeUI
 {
@@ -36,21 +38,66 @@ namespace FocusMeUI
         bool show_another_window = false;
         ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
-        /*
-        ImGui::Separator();
-        ImGui::LabelText("label", "Value");
+        //style the windo
+        ImGuiStyle& style = ImGui::GetStyle();
+        style.WindowMinSize = ImVec2(600, 600);//ImVec2(ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().y);
+        
 
+        ImGui::Begin("Settings", 0, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize);
+
+        ImGui::Text("Select the program you want to create restrictions for:");
+
+        //drop down menu for programs
+        ImGui::Separator();
+        //ImGui::LabelText("label", "Value");
         {
-            // Using the _simplified_ one-liner Combo() api here
-            // See "Combo" section for examples of how to use the more flexible BeginCombo()/EndCombo() api.
-            IMGUI_DEMO_MARKER("Widgets/Basic/Combo");
-            const char* items[] = { "AAAA", "BBBB", "CCCC", "DDDD", "EEEE", "FFFF", "GGGG", "HHHH", "IIIIIII", "JJJJ", "KKKKKKK" };
-            static int item_current = 0;
-            ImGui::Combo("combo", &item_current, items, IM_ARRAYSIZE(items));
-            ImGui::SameLine(); HelpMarker(
-                "Using the simplified one-liner Combo API here.\nRefer to the \"Combo\" section below for an explanation of how to use the more flexible and general BeginCombo/EndCombo API.");
+            //list of all the programs on the computers
+            const char* programs[] = { "AAAA", "BBBB", "CCCC", "DDDD", "EEEE", "FFFF", "GGGG", "HHHH", "IIIIIII", "JJJJ", "KKKKKKK" };
+
+            //the selected program by the user
+            static int selected_program = 0;
+            ImGui::Combo("Program List", &selected_program, programs, IM_ARRAYSIZE(programs));
+            //ImGui::SameLine(); 
+            //HelpMarker("Using the simplified one-liner Combo API here.\nRefer to the \"Combo\" section below for an explanation of how to use the more flexible and general BeginCombo/EndCombo API.");
         }
-        */
+        //end drop down menu
+
+        //time entry
+        {
+            ImGui::Text("What time should this program not be used?");
+
+            static int start_hm[2] = { 10, 30 };
+            static int end_hm[2] = { 11, 30 };
+            static int am_pm = 0;
+            ImGui::InputInt2("Hour: Minute", start_hm); ImGui::SameLine();
+            ImGui::RadioButton("AM", &am_pm, 0); ImGui::SameLine();
+            ImGui::RadioButton("PM", &am_pm, 1);
+
+            ImGui::InputInt2("Hour: Minute", end_hm); ImGui::SameLine();
+            ImGui::RadioButton("AM", &am_pm, 0); ImGui::SameLine();
+            ImGui::RadioButton("PM", &am_pm, 1);
+
+            static int clicked = 0;
+            if (ImGui::Button("Add 'off' time"))
+                clicked++;
+            if (clicked & 1)
+            {
+                ImGui::SameLine();
+                ImGui::Text("Time submitted");
+            }
+        }
+        //end time entry
+        
+
+        //time display 
+        {
+            //display all times entered by the user
+
+        }
+        //end time display
+
+        
+        ImGui::End();
 
         // 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
         if (show_demo_window)
@@ -76,16 +123,6 @@ namespace FocusMeUI
             ImGui::Text("counter = %d", counter);
 
             ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-            ImGui::End();
-        }
-
-        // 3. Show another simple window.
-        if (show_another_window)
-        {
-            ImGui::Begin("Another Window", &show_another_window);   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
-            ImGui::Text("Hello from another window!");
-            if (ImGui::Button("Close Me"))
-                show_another_window = false;
             ImGui::End();
         }
 	}
