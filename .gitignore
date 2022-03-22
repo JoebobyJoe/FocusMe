@@ -1,6 +1,9 @@
 # Prerequisites
 *.d
 
+# Generated Files
+*.ini
+
 ## Visual Studio artifacts
 .vs
 ipch

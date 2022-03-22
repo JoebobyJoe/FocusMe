@@ -156,7 +156,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="FocusMe.cpp" />
-    <ClCompile Include="FocusMeUI.cpp" />
+    <ClCompile Include="src\FocusMeUI.cpp" />
     <ClCompile Include="src\imgui\backends\imgui_impl_glfw.cpp" />
     <ClCompile Include="src\imgui\backends\imgui_impl_vulkan.cpp" />
     <ClCompile Include="src\imgui\imgui.cpp" />
@@ -166,7 +166,7 @@
     <ClCompile Include="src\imgui\imgui_widgets.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="FocusMeUI.h" />
+    <ClInclude Include="src\FocusMeUI.h" />
     <ClInclude Include="src\imgui\backends\GLFW\glfw3.h" />
     <ClInclude Include="src\imgui\backends\GLFW\glfw3native.h" />
     <ClInclude Include="src\imgui\backends\imgui_impl_glfw.h" />
