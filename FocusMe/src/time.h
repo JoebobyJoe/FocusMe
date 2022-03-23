@@ -15,6 +15,7 @@ public:
 	Time(int hour, int min);
 	~Time();
 	int* getTime();
+	void setTime(int hour, int min);
 	int operator==(const Time x);
 	std::string to_string();
 	
@@ -44,6 +45,11 @@ int* Time::getTime()
 	return m_time;
 }
 
+void Time::setTime(int hour, int min)
+{
+	m_time[0] = hour;
+	m_time[1] = min;
+}
 
 std::string Time::to_string()
 {

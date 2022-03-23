@@ -87,6 +87,11 @@ namespace FocusMeUI
             ImGui::Text("Times program x won't run:");
             //display all times entered by the user
             static TimeSet selected_time = TimeSet(-1, -1); // Here we store our selection data as an index.
+
+            std::string temp = selected_time.to_string();
+            //const char* tmpe = (const char*) selected_time.to_string();
+            const char* tmep = selected_time.to_string().c_str();
+
             if (ImGui::BeginListBox("##Timelist"))
             {
                 std::list <TimeSet> ::iterator it;
@@ -99,7 +104,7 @@ namespace FocusMeUI
                         ImGui::Text("There is a line selected");
                     }
 
-                    if (ImGui::Selectable((*it).toString().c_str(), is_selected))
+                    if (ImGui::Selectable((*it).to_string().c_str(), is_selected))
                     {
                         //don't do anything if the button wasn't clicked
                         if (clicked == 1)
