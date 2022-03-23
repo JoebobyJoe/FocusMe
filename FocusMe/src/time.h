@@ -17,7 +17,7 @@ public:
 	int* getTime();
 	void setTime(int hour, int min);
 	int operator==(const Time x);
-	std::string to_string();
+	void to_string(std::string &str);
 	
 
 private:
@@ -51,11 +51,11 @@ void Time::setTime(int hour, int min)
 	m_time[1] = min;
 }
 
-std::string Time::to_string()
+void Time::to_string(std::string &str)
 {
 	std::string hour = (m_time[0] < 10) ? "0" + std::to_string(m_time[0]) : std::to_string(m_time[0]);
 	std::string min = (m_time[1] < 10) ? "0" + std::to_string(m_time[1]) : std::to_string(m_time[1]);
-	return  hour + ":" + min;
+	str =  hour + ":" + min;
 }
 
 int Time::operator==(const Time x)
