@@ -5,6 +5,8 @@ VisualStudioVersion = 16.0.32228.343
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FocusMe", "FocusMe.vcxproj", "{B5930EF7-D179-48CF-AFF9-2530B7C7B358}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FocusMeUnitTests", "..\FocusMeUnitTests\FocusMeUnitTests.vcxproj", "{1040A308-0065-4B02-BFC5-9012AA8564A3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -21,6 +23,14 @@ Global
 		{B5930EF7-D179-48CF-AFF9-2530B7C7B358}.Release|x64.Build.0 = Release|x64
 		{B5930EF7-D179-48CF-AFF9-2530B7C7B358}.Release|x86.ActiveCfg = Release|Win32
 		{B5930EF7-D179-48CF-AFF9-2530B7C7B358}.Release|x86.Build.0 = Release|Win32
+		{1040A308-0065-4B02-BFC5-9012AA8564A3}.Debug|x64.ActiveCfg = Debug|x64
+		{1040A308-0065-4B02-BFC5-9012AA8564A3}.Debug|x64.Build.0 = Debug|x64
+		{1040A308-0065-4B02-BFC5-9012AA8564A3}.Debug|x86.ActiveCfg = Debug|Win32
+		{1040A308-0065-4B02-BFC5-9012AA8564A3}.Debug|x86.Build.0 = Debug|Win32
+		{1040A308-0065-4B02-BFC5-9012AA8564A3}.Release|x64.ActiveCfg = Release|x64
+		{1040A308-0065-4B02-BFC5-9012AA8564A3}.Release|x64.Build.0 = Release|x64
+		{1040A308-0065-4B02-BFC5-9012AA8564A3}.Release|x86.ActiveCfg = Release|Win32
+		{1040A308-0065-4B02-BFC5-9012AA8564A3}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
