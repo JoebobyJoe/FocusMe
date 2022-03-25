@@ -2,14 +2,14 @@
 
 #include "imgui.h"
 #include "timeSet.h"
-
-#include <vector>
+//#include "time.h"
+#include <list>
 
 
 namespace FocusMeUI
 {
     //list of times that the user doesn't want to use program x
-    std::vector<TimeSet>times;
+    std::list<TimeSet>times;
 
 	void RenderUI()
 	{
@@ -66,6 +66,8 @@ namespace FocusMeUI
                 clicked = 1;
             if (clicked == 1)
             {
+                ImGui::Text("Time submitted");
+
                 //add the time to the list
                 times.push_back(TimeSet(start, end));
 
@@ -83,53 +85,47 @@ namespace FocusMeUI
             
 
             ImGui::Text("Times program x won't run:");
-            
             //display all times entered by the user
             static TimeSet selected_time = TimeSet(-1, -1); // Here we store our selection data as an index.
-            static bool deleted = false;
+
+            /*
+            std::string temp;
+            selected_time.to_string(temp);
+            //const char* tmpe = (const char*) selected_time.to_string();
+            const char* tmep = (const char*) malloc(sizeof(char) * 15);
+            //selected_time.to_string(tmep);
+            */
+            std::string temp = "temp";
+
             if (ImGui::BeginListBox("##Timelist"))
             {
-                std::vector <TimeSet> ::iterator it;
-                for (it = times.begin(); it != times.end();)
-                //for (i = 0; i <= times.size(); i++)
+                std::list <TimeSet> ::iterator it;
+                for (it = times.begin(); it != times.end(); it++)
                 {
-                    //check to see if the selected item is highlighted
                     const bool is_selected = (selected_time == *it);
 
-                    //highlight the selected item in the listbox
-                    if (ImGui::Selectable((*it).toString().c_str(), is_selected))
+                    if (is_selected)
                     {
-                        //set the selected_time to the the item we clicked
-                        selected_time = *it;
-                        
+                        ImGui::Text("There is a line selected");
+                    }
+                    (*it).to_string(temp);
+                    if (ImGui::Selectable(temp.c_str(), is_selected))
+                    {
                         //don't do anything if the button wasn't clicked
                         if (clicked == 1)
                         {
+                            //ImGui::SameLine();
+                            //ImGui::Text("Time removed");
+
                             //remove the item from the list
-                            it = times.erase(it);
-                            deleted = true;
+                            times.erase(it);
+                            break;
 
-                            //this might be the solution to multiple blocks being highlighted when times are the same
-                            //break;
-
-                            
+                            //reset the button
+                            clicked = 0;
                         }
                     }
-
-                    //remove the correct element from the list
-                    if (deleted)
-                    {
-                        //reset deleted
-                        deleted = false;
-                        clicked = 0;
-
-                    }
-                    else
-                    {
-                        //we didn't delete anything so we can increment the itterator
-                        //if we delete we cannot increment
-                        it++;
-                    }
+                        //selected_time = *it;
 
                     // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
                     if (is_selected)
@@ -141,39 +137,8 @@ namespace FocusMeUI
 
             if (ImGui::Button("Remove Time"))
                 clicked = 1;
-
-             
-            
-            //working list
-            std::vector<const char*>tempList;
-            tempList.push_back("AAAA");
-            tempList.push_back("BBBB");
-            tempList.push_back("CCCC");
-            tempList.push_back("DDDD");
-            tempList.push_back("EEEE");
-            tempList.push_back("FFFF");
-
-            
-            static const char* item_current_idx = nullptr; // Here we store our selection data as an POINTER.
-            if (ImGui::BeginListBox("listbox 1"))
-            {
-                std::vector <const char*> ::iterator it;
-                for (it = tempList.begin(); it != tempList.end(); it++)
-                {
-                    const bool is_selected = (item_current_idx == *it);
-                    if (ImGui::Selectable((*it), is_selected))
-                        item_current_idx = *it;
-
-                    // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
-                    if (is_selected)
-                        ImGui::SetItemDefaultFocus();
-                }
-                ImGui::EndListBox();
-            }
         }
         //end time display
-       
-            
 
         ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
         ImGui::End();
