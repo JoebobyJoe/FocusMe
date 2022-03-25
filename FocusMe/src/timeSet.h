@@ -10,7 +10,7 @@ public:
 	TimeSet(int start, int end);// used to set 'null' values
 	~TimeSet();
 	Time* getTimeSet();
-	std::string toString();
+	void to_string(std::string &str);
 
 	//overrides
 	int operator==(const TimeSet x);
@@ -46,9 +46,12 @@ Time* TimeSet::getTimeSet()
 	return m_time;
 }
 
-std::string TimeSet::toString()
+void TimeSet::to_string(std::string &str)
 {
-	return m_time[0].to_string() + " - " + m_time[1].to_string();
+	std::string start, end;
+	m_time[0].to_string(start);
+	m_time[1].to_string(end);
+	str = start + " - " + end;
 }
 
 int TimeSet::operator==(const TimeSet x)
