@@ -87,14 +87,8 @@ namespace FocusMeUI
             ImGui::Text("Times program x won't run:");
             //display all times entered by the user
             static TimeSet selected_time = TimeSet(-1, -1); // Here we store our selection data as an index.
+            static bool deleted = false;
 
-            /*
-            std::string temp;
-            selected_time.to_string(temp);
-            //const char* tmpe = (const char*) selected_time.to_string();
-            const char* tmep = (const char*) malloc(sizeof(char) * 15);
-            //selected_time.to_string(tmep);
-            */
             std::string temp = "temp";
 
             if (ImGui::BeginListBox("##Timelist"))
@@ -104,10 +98,8 @@ namespace FocusMeUI
                 {
                     const bool is_selected = (selected_time == *it);
 
-                    if (is_selected)
-                    {
-                        ImGui::Text("There is a line selected");
-                    }
+                    //highlight the selected item in the listbox
+
                     (*it).to_string(temp);
                     if (ImGui::Selectable(temp.c_str(), is_selected))
                     {
