@@ -2,14 +2,14 @@
 
 #include "imgui.h"
 #include "timeSet.h"
-//#include "time.h"
-#include <list>
+
+#include <vector>
 
 
 namespace FocusMeUI
 {
     //list of times that the user doesn't want to use program x
-    std::list<TimeSet>times;
+    std::vector<TimeSet>times;
 
 	void RenderUI()
 	{
@@ -86,37 +86,50 @@ namespace FocusMeUI
             
             //display all times entered by the user
             static TimeSet selected_time = TimeSet(-1, -1); // Here we store our selection data as an index.
+            static bool deleted = false;
             if (ImGui::BeginListBox("##Timelist"))
             {
-                std::list <TimeSet> ::iterator it;
-                for (it = times.begin(); it != times.end(); it++)
+                std::vector <TimeSet> ::iterator it;
+                for (it = times.begin(); it != times.end();)
+                //for (i = 0; i <= times.size(); i++)
                 {
                     //check to see if the selected item is highlighted
                     const bool is_selected = (selected_time == *it);
 
+                    //highlight the selected item in the listbox
                     if (ImGui::Selectable((*it).toString().c_str(), is_selected))
                     {
                         //set the selected_time to the the item we clicked
                         selected_time = *it;
-
-                        //this might be the solution to multiple blocks being highlighted when times are the same
-                        //break;
-
+                        
                         //don't do anything if the button wasn't clicked
                         if (clicked == 1)
                         {
-                            //ImGui::SameLine();
-                            //ImGui::Text("Time removed");
-
                             //remove the item from the list
-                            times.erase(it);
-                            break;
+                            it = times.erase(it);
+                            deleted = true;
 
-                            //reset the button
-                            clicked = 0;
+                            //this might be the solution to multiple blocks being highlighted when times are the same
+                            //break;
+
+                            
                         }
                     }
-                        //selected_time = *it;
+
+                    //remove the correct element from the list
+                    if (deleted)
+                    {
+                        //reset deleted
+                        deleted = false;
+                        clicked = 0;
+
+                    }
+                    else
+                    {
+                        //we didn't delete anything so we can increment the itterator
+                        //if we delete we cannot increment
+                        it++;
+                    }
 
                     // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
                     if (is_selected)
@@ -132,7 +145,7 @@ namespace FocusMeUI
              
             
             //working list
-            std::list<const char*>tempList;
+            std::vector<const char*>tempList;
             tempList.push_back("AAAA");
             tempList.push_back("BBBB");
             tempList.push_back("CCCC");
@@ -144,7 +157,7 @@ namespace FocusMeUI
             static const char* item_current_idx = nullptr; // Here we store our selection data as an POINTER.
             if (ImGui::BeginListBox("listbox 1"))
             {
-                std::list <const char*> ::iterator it;
+                std::vector <const char*> ::iterator it;
                 for (it = tempList.begin(); it != tempList.end(); it++)
                 {
                     const bool is_selected = (item_current_idx == *it);
