@@ -87,6 +87,8 @@ namespace FocusMeUI
             //display all times entered by the user
             static TimeSet selected_time = TimeSet(-1, -1); // Here we store our selection data as an index.
             static bool deleted = false;
+            std::string temp = "temp";
+
             if (ImGui::BeginListBox("##Timelist"))
             {
                 std::vector <TimeSet> ::iterator it;
@@ -97,7 +99,8 @@ namespace FocusMeUI
                     const bool is_selected = (selected_time == *it);
 
                     //highlight the selected item in the listbox
-                    if (ImGui::Selectable((*it).toString().c_str(), is_selected))
+                    (*it).to_string(temp);
+                    if (ImGui::Selectable(temp.c_str(), is_selected))
                     {
                         //set the selected_time to the the item we clicked
                         selected_time = *it;
