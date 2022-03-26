@@ -9,6 +9,7 @@
 namespace FocusMeUI
 {
     //list of times that the user doesn't want to use program x
+    //TODO: this should be passed in when the program launches from a JSON or something
     std::list<TimeSet>times;
 
 	void RenderUI()
@@ -32,14 +33,14 @@ namespace FocusMeUI
         //ImGui::LabelText("label", "Value");
         {
             //list of all the programs on the computers
+            //TODO: this list should be passed in from the main function on startup
             const char* programs[] = { "AAAA", "BBBB", "CCCC", "DDDD", "EEEE", "FFFF", "GGGG", "HHHH", "IIIIIII", "JJJJ", "KKKKKKK" };
 
             //the selected program by the user
             static int selected_program = 0;
             ImGui::Combo("Program List", &selected_program, programs, IM_ARRAYSIZE(programs));
-            //ImGui::SameLine(); 
-            //HelpMarker("Using the simplified one-liner Combo API here.\nRefer to the \"Combo\" section below for an explanation of how to use the more flexible and general BeginCombo/EndCombo API.");
         }
+
         //end drop down menu
 
         //time entry
@@ -83,8 +84,10 @@ namespace FocusMeUI
             static bool clicked = false;//did the user request a time to be removed
             static bool deleted = false;//has an item been deleted, used to avoid a iteration incrment if so
 
+            //the list of times for program x
             if (ImGui::BeginListBox("##Timelist"))
             {
+                //iterate through the list
                 std::list <TimeSet> ::iterator it;
                 for (it = times.begin(); it != times.end();)
                 {
@@ -152,6 +155,7 @@ namespace FocusMeUI
         }
         //end time display
 
+        //some performance debug stuff
         ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
         ImGui::End();
 
