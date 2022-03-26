@@ -2,7 +2,7 @@
 
 #include "imgui.h"
 #include "timeSet.h"
-//#include "time.h"
+#include "Log.h"
 #include <list>
 
 
@@ -61,18 +61,10 @@ namespace FocusMeUI
             if (ImGui::RadioButton("PM##End", PM == e_meridiem)) { e_meridiem = PM; };
 
             //button for submitting the time
-            static int clicked = 0;
             if (ImGui::Button("Add 'off' time"))
-                clicked = 1;
-            if (clicked == 1)
             {
-                ImGui::Text("Time submitted");
-
                 //add the time to the list
                 times.push_back(TimeSet(start, end));
-
-                //reset the button, otherwise every frame adds the time
-                clicked = 0;
             }
             
         }
@@ -81,51 +73,67 @@ namespace FocusMeUI
 
         //time display 
         {
-            static int clicked = 0;
-            
-
             ImGui::Text("Times program x won't run:");
             //display all times entered by the user
-            static TimeSet selected_time = TimeSet(-1, -1); // Here we store our selection data as an index.
+            static TimeSet selected_time = TimeSet(-1, -1); // Here we store our selection data as an pointer.
+            
+            std::string sel_time_str = "temp";//value doesn't matter
+            std::string logString = "log";//value doesn't matter
 
-            /*
-            std::string temp;
-            selected_time.to_string(temp);
-            //const char* tmpe = (const char*) selected_time.to_string();
-            const char* tmep = (const char*) malloc(sizeof(char) * 15);
-            //selected_time.to_string(tmep);
-            */
-            std::string temp = "temp";
+            static bool clicked = false;//did the user request a time to be removed
+            static bool deleted = false;//has an item been deleted, used to avoid a iteration incrment if so
 
             if (ImGui::BeginListBox("##Timelist"))
             {
                 std::list <TimeSet> ::iterator it;
-                for (it = times.begin(); it != times.end(); it++)
+                for (it = times.begin(); it != times.end();)
                 {
+                    //check if this is currently a selected value
                     const bool is_selected = (selected_time == *it);
 
-                    if (is_selected)
+                    //get the string of the current iterator value
+                    (*it).to_string(sel_time_str);
+
+                    //set the string ID with if it is selected.
+                    if (ImGui::Selectable(sel_time_str.c_str(), is_selected))
                     {
-                        ImGui::Text("There is a line selected");
+                        //set the selected item
+                        selected_time = *it;
+
+                        (*it).to_string(logString);
+                        g_log << "Selected item " << logString << " bool value: " << is_selected << std::endl;
                     }
-                    (*it).to_string(temp);
-                    if (ImGui::Selectable(temp.c_str(), is_selected))
+                    
+                    //don't do anything if the button wasn't clicked
+                    if (clicked)
                     {
-                        //don't do anything if the button wasn't clicked
-                        if (clicked == 1)
+                        //make sure we are on the selected item
+                        if (is_selected)
                         {
-                            //ImGui::SameLine();
-                            //ImGui::Text("Time removed");
+                            (*it).to_string(logString);
+                            g_log << "Removed item " << logString << " bool value: " << is_selected << std::endl;
 
                             //remove the item from the list
-                            times.erase(it);
-                            break;
+                            it = times.erase(it);
 
                             //reset the button
-                            clicked = 0;
+                            clicked = false;
+                            deleted = false;
+
+                            //break;
+                        }
+                        else
+                        {
+                            //this isn't the correct time in the loop so move onto the next one
+                            it++;
                         }
                     }
-                        //selected_time = *it;
+                    else
+                    {
+                        //the button wasn't clicked so move onto the next iteration of the loop
+                        //when an item is deleted we can't increment the iterater, thus the messy code
+                        it++;
+                    }
 
                     // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
                     if (is_selected)
@@ -135,8 +143,12 @@ namespace FocusMeUI
                 ImGui::EndListBox();
             }
 
+            //the remove time button
             if (ImGui::Button("Remove Time"))
-                clicked = 1;
+            {
+                clicked = true;
+                deleted = true;
+            }
         }
         //end time display
 

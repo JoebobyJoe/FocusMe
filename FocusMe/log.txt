@@ -1,0 +1,4 @@
+Selected item 03:00 - 00:00 bool value: 0
+Selected item 01:00 - 00:00 bool value: 0
+Selected item 02:00 - 00:00 bool value: 0
+Removed item 02:00 - 00:00 bool value: 1
